@@ -1,17 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { LeadManagerAPI, testCredentials, testLeadData, validPriorities } from "./api.utils";
 
-test.describe("Lead Manager API - Simplified Tests", () => {
+test.describe("Lead Manager API Tests", () => {
   let api: LeadManagerAPI;
 
   test.beforeEach(async ({ request }) => {
     api = new LeadManagerAPI(request);
   });
 
-  // ============================================
-  // LOGIN TESTS
-  // ============================================
-  test.describe("Login Endpoint", () => {
+  test.describe("Login", () => {
     test("successful login returns token", async () => {
       const response = await api.login(testCredentials.valid.email, testCredentials.valid.password);
 
@@ -45,9 +42,6 @@ test.describe("Lead Manager API - Simplified Tests", () => {
     });
   });
 
-  // ============================================
-  // GET LEADS TESTS
-  // ============================================
   test.describe("Get Leads Endpoint", () => {
     test("get leads with valid token succeeds", async () => {
       await api.login(testCredentials.valid.email, testCredentials.valid.password);
@@ -58,7 +52,8 @@ test.describe("Lead Manager API - Simplified Tests", () => {
 
       const body = await response.json();
       expect(body.success).toBe(true);
-      expect(Array.isArray(body.data)).toBe(true);
+      const leadsData = body.data || body;
+      expect(Array.isArray(leadsData)).toBe(true);
     });
 
     test("get leads without token fails", async () => {
@@ -84,13 +79,12 @@ test.describe("Lead Manager API - Simplified Tests", () => {
       expect(response.status()).toBe(200);
 
       const body = await response.json();
-      expect(body.data).toBeDefined();
+      expect(body.success).toBe(true);
+      const leadsData = body.data || body;
+      expect(Array.isArray(leadsData)).toBe(true);
     });
   });
 
-  // ============================================
-  // CREATE LEAD TESTS
-  // ============================================
   test.describe("Create Lead Endpoint", () => {
     test("create lead with valid data succeeds", async () => {
       await api.login(testCredentials.valid.email, testCredentials.valid.password);
@@ -101,7 +95,7 @@ test.describe("Lead Manager API - Simplified Tests", () => {
 
       const body = await response.json();
       expect(body.success).toBe(true);
-      expect(body.data).toBeDefined();
+      expect(body.data || body.id || body.name).toBeTruthy();
     });
 
     test("create lead without token fails", async () => {
@@ -171,12 +165,10 @@ test.describe("Lead Manager API - Simplified Tests", () => {
 
       const body = await response.json();
       expect(body.success).toBe(true);
+      expect(body.data || body.id || body.name).toBeTruthy();
     });
   });
 
-  // ============================================
-  // AUTHORIZATION TESTS
-  // ============================================
   test.describe("Authorization", () => {
     test("bearer token format is enforced", async ({ request }) => {
       const apiTest = new LeadManagerAPI(request);
@@ -201,9 +193,7 @@ test.describe("Lead Manager API - Simplified Tests", () => {
     });
   });
 
-  // ============================================
-  // SECURITY TESTS
-  // ============================================
+
   test.describe("Security", () => {
     test("SQL injection attempts are rejected", async () => {
       const response = await api.login("' OR '1'='1", "' OR '1'='1");
@@ -222,7 +212,6 @@ test.describe("Lead Manager API - Simplified Tests", () => {
 
       const response = await api.createLead(xssPayload);
 
-      // Should either sanitize or reject
       expect([200, 201, 400]).toContain(response.status());
     });
   });

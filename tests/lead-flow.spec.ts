@@ -7,11 +7,11 @@ test("Lead Management End-to-End Flow", async ({ page }) => {
   console.log("\n[TEST] Starting Lead Management Test");
   console.log(`Email: ${testEmail}`);
 
-  // Step 1: Navigate to login page
+
   await page.goto("https://v0-lead-manager-app.vercel.app/login");
   await page.waitForTimeout(1000);
 
-  // Step 2: Fill login form
+
   const emailInput = page.locator("input[type=\"email\"]");
   const passwordInput = page.locator("input[type=\"password\"]");
   const signInButton = page.locator("button");
@@ -23,20 +23,20 @@ test("Lead Management End-to-End Flow", async ({ page }) => {
     await passwordInput.fill(testPassword);
   }
 
-  // Step 3: Click sign in button
+
   if (await signInButton.count() > 0) {
     await signInButton.first().click();
   }
 
-  // Wait for navigation or page update
+
   await page.waitForTimeout(3000);
 
-  // Step 4: Check login status
+
   const currentUrl = page.url();
   const isLoggedIn = !currentUrl.includes("/login");
 
   if (isLoggedIn) {
-    // Step 5: Create Lead
+
     await page.waitForTimeout(1000);
 
     const createLeadButton = page.locator("button:has-text(\"Create Lead\")");

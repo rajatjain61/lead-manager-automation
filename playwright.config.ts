@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
-// Load environment variables for credentials
-const TEST_EMAIL = process.env.TEST_EMAIL || "test@example.com";
-const TEST_PASSWORD = process.env.TEST_PASSWORD || "Password123!";
+
+const TEST_EMAIL = process.env.TEST_EMAIL || "admin@company.com";
+const TEST_PASSWORD = process.env.TEST_PASSWORD || "Admin@123";
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: false,

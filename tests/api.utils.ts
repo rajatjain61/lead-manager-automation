@@ -10,9 +10,6 @@ export class LeadManagerAPI {
     this.request = request;
   }
 
-  /**
-   * Login and store the authentication token
-   */
   async login(email: string, password: string) {
     const response = await this.request.post(`${BASE_URL}/login`, {
       data: {
@@ -29,23 +26,16 @@ export class LeadManagerAPI {
     return response;
   }
 
-  /**
-   * Get the current authentication token
-   */
+
   getToken(): string | null {
     return this.token;
   }
 
-  /**
-   * Set authentication token manually
-   */
   setToken(token: string): void {
     this.token = token;
   }
 
-  /**
-   * Get authorization headers with token
-   */
+
   private getAuthHeaders(): { Authorization: string } | {} {
     if (!this.token) {
       return {};
@@ -55,18 +45,14 @@ export class LeadManagerAPI {
     };
   }
 
-  /**
-   * Get list of leads with pagination
-   */
+
   async getLeads(page: number = 1, limit: number = 10) {
     return await this.request.get(`${BASE_URL}/leads?page=${page}&limit=${limit}`, {
       headers: this.getAuthHeaders()
     });
   }
 
-  /**
-   * Create a new lead
-   */
+
   async createLead(leadData: {
     name: string;
     email: string;
@@ -85,16 +71,11 @@ export class LeadManagerAPI {
     });
   }
 
-  /**
-   * Get leads without authorization (for testing unauthorized access)
-   */
   async getLeadsUnauthorized() {
     return await this.request.get(`${BASE_URL}/leads`);
   }
 
-  /**
-   * Get leads with invalid token
-   */
+
   async getLeadsWithInvalidToken(invalidToken: string) {
     return await this.request.get(`${BASE_URL}/leads`, {
       headers: {
@@ -103,18 +84,13 @@ export class LeadManagerAPI {
     });
   }
 
-  /**
-   * Create lead without authorization
-   */
+
   async createLeadUnauthorized(leadData: object) {
     return await this.request.post(`${BASE_URL}/leads`, {
       data: leadData
     });
   }
 
-  /**
-   * Create lead with custom headers (for testing)
-   */
   async createLeadWithCustomHeaders(leadData: object, headers: object) {
     return await this.request.post(`${BASE_URL}/leads`, {
       headers: {
